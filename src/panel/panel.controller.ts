@@ -33,6 +33,13 @@ export class PanelController {
     };
   }
 
+  // L10: el panel en vivo de la maraton (Kafka). Solo administradores: en la biblioteca, el grupo bibliotecarios.
+  @Get('en-vivo')
+  @Roles('bibliotecarios')
+  async enVivo() {
+    return this.panel.enVivo();
+  }
+
   @Post('prestamos')
   async prestar(
     @Req() req: { usuario: Usuario; headers: Record<string, string | undefined> },

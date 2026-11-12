@@ -19,10 +19,12 @@ export type Prestamo = {
 export class PanelService {
   private readonly librosUrl: string;
   private readonly prestamosUrl: string;
+  private readonly eventosUrl: string;
 
   constructor(config: ConfigService) {
     this.librosUrl    = config.getOrThrow<string>('LIBROS_URL');
     this.prestamosUrl = config.getOrThrow<string>('PRESTAMOS_URL');
+    this.eventosUrl   = config.getOrThrow<string>('EVENTOS_URL');
   }
 
   // fetch NO lanza con un 404 ni con un 500: hay que mirar .ok a mano. Es lo de X4.
@@ -65,6 +67,11 @@ export class PanelService {
   async todos() {
     const [libros, prestamos] = await this.traerTodo();
     return { total: prestamos.length, prestamos: this.unir(prestamos, libros) };
+  }
+
+  // L10: kpi_minuto y alertas son de biblioteca-eventos. El BFF se las pide por HTTP; nunca abre Postgres.
+  async enVivo() {
+    return this.pedir<unknown>(`${this.eventosUrl}/panel/en-vivo`, 'eventos');
   }
 
   // Solo para medir en el 4.3. En un proyecto de verdad esto no existiria.
